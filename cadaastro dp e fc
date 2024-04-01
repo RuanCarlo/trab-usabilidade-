@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Funcionários</title>
+    <style>
+        body {
+            background-color: #222;
+            color: #00eeffd3;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #37dffd;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #ffffff;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #008cba;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005f70;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        .menu {
+            display: none;
+        }
+
+        .menu.active {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Cadastro de Funcionários</h1>
+
+    <button id="btnDepartamentos">Departamentos</button>
+    <button id="btnFuncionarios">Funcionários</button>
+
+    <div id="menuDepartamentos" class="menu">
+        <h2>Departamentos</h2>
+        <!-- cadastrar departamento -->
+        <form id="formDepartamento">
+            <label for="nomeDepartamento">Nome do Departamento:</label>
+            <input type="text" id="nomeDepartamento" name="nomeDepartamento" required>
+            <br>
+            <label for="enderecoDepartamento">Endereço do Departamento:</label>
+            <input type="text" id="enderecoDepartamento" name="enderecoDepartamento" required>
+            <br>
+            <label for="gerenteDepartamento">Gerente do Departamento:</label>
+            <input type="text" id="gerenteDepartamento" name="gerenteDepartamento" required>
+            <br>
+            <button type="submit">Cadastrar Departamento</button>
+        </form>
+    </div>
+
+    <div id="menuFuncionarios" class="menu">
+        <h2>Funcionários</h2>
+        <!--  cadastrar funcionário -->
+        <form id="formFuncionario">
+            <label for="nomeFuncionario">Nome do Funcionário:</label>
+            <input type="text" id="nomeFuncionario" name="nomeFuncionario" required>
+            <br>
+            <label for="departamentoFuncionario">Departamento do Funcionário:</label>
+            <select id="departamentoFuncionario" name="departamentoFuncionario" required>
+                <option value="">Selecione o departamento</option>
+                <!-- Opções de departamentos seriam carregadas dinamicamente -->
+            </select>
+            <br>
+            <label for="encarregadoFuncionario">Encarregado do Funcionário:</label>
+            <input type="text" id="encarregadoFuncionario" name="encarregadoFuncionario" required>
+            <br>
+            <button type="submit">Cadastrar Funcionário</button>
+        </form>
+    </div>
+
+    
+    <h2>Funcionários Cadastrados</h2>
+    <ul id="listaFuncionarios"></ul>
+
+    <script>
+        // Array para armazenar os departamentos
+        const departamentos = [];
+
+        // Botões
+        const btnDepartamentos = document.getElementById('btnDepartamentos');
+        const btnFuncionarios = document.getElementById('btnFuncionarios');
+
+        // Menus
+        const menuDepartamentos = document.getElementById('menuDepartamentos');
+        const menuFuncionarios = document.getElementById('menuFuncionarios');
+
+        // Event listeners para os botões
+        btnDepartamentos.addEventListener('click', () => {
+            menuDepartamentos.classList.add('active');
+            menuFuncionarios.classList.remove('active');
+        });
+
+        btnFuncionarios.addEventListener('click', () => {
+            menuDepartamentos.classList.remove('active');
+            menuFuncionarios.classList.add('active');
+        });
+
+        // adicionar departamento
+        function adicionarDepartamento(event) {
+            event.preventDefault();
+            const nomeDepartamento = document.getElementById('nomeDepartamento').value;
+            const enderecoDepartamento = document.getElementById('enderecoDepartamento').value;
+            const gerenteDepartamento = document.getElementById('gerenteDepartamento').value;
+
+            const departamento = {
+                nome: nomeDepartamento,
+                endereco: enderecoDepartamento,
+                gerente: gerenteDepartamento,
+                funcionarios: [] // Array para armazenar funcionários do departamento
+            };
+
+            departamentos.push(departamento);
+
+            // Limpar formulário
+            document.getElementById('nomeDepartamento').value = '';
+            document.getElementById('enderecoDepartamento').value = '';
+            document.getElementById('gerenteDepartamento').value = '';
+
+            // Atualizar departamentos no de cadastro de funcionários
+            const selectDepartamento = document.getElementById('departamentoFuncionario');
+            const option = document.createElement('option');
+            option.text = nomeDepartamento;
+            option.value = nomeDepartamento;
+            selectDepartamento.add(option);
+
+            console.log('Departamento cadastrado:', departamento);
+        }
+
+        //  adicionar funcionário
+        function adicionarFuncionario(event) {
+            event.preventDefault();
+            const nomeFuncionario = document.getElementById('nomeFuncionario').value;
+            const departamentoFuncionario = document.getElementById('departamentoFuncionario').value;
+            const encarregadoFuncionario = document.getElementById('encarregadoFuncionario').value;
+
+            const funcionario = {
+                nome: nomeFuncionario,
+                departamento: departamentoFuncionario,
+                encarregado: encarregadoFuncionario
+            };
+
+            // Encontrar o departamento correspondente e adicionar o funcionário
+            const departamento = departamentos.find(dep => dep.nome === departamentoFuncionario);
+            if (departamento) {
+                departamento.funcionarios.push(funcionario);
+            } else {
+                console.error('Departamento não encontrado:', departamentoFuncionario);
+            }
+
+            // Limpar campos do formulário
+            document.getElementById('nomeFuncionario').value = '';
+            document.getElementById('encarregadoFuncionario').value = '';
+
+            // Atualizar lista de funcionários 
+            const listaFuncionarios = document.getElementById('listaFuncionarios');
+            listaFuncionarios.innerHTML = ''; // Limpar a lista antes de recriá-la
+
+            departamentos.forEach(departamento => {
+                departamento.funcionarios.forEach(funcionario => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${funcionario.nome} - ${funcionario.departamento} - Encarregado: ${funcionario.encarregado}`;
+                    listaFuncionarios.appendChild(listItem);
+                });
+            });
+
+            console.log('Funcionário cadastrado:', funcionario);
+        }
+
+        // Adicionar eventos de submit aos formulários
+        document.getElementById('formDepartamento').addEventListener('submit', adicionarDepartamento);
+        document.getElementById('formFuncionario').addEventListener('submit', adicionarFuncionario);
+    </script>
+</body>
+</html>
+  
